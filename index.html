@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nathaniel Budz — MFD Portfolio</title>
+<meta name="description" content="Nathaniel Budz — Computer Engineering student, ASTRO Systems co-founder, hardware engineer.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#0a0a0a url('bg1.png') center/cover fixed no-repeat;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace}
+.bg-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.82);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:0}
+.mw{display:flex;justify-content:center;padding:12px 0;position:relative;z-index:1}
+.mu{width:660px;max-width:95vw}
+.bz{background:linear-gradient(145deg,#1e1e1e,#141414);border-radius:16px;padding:10px;border:2px solid #2a2a2a;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05),0 8px 32px rgba(0,0,0,0.8)}
+.mi{display:flex;align-items:stretch}
+.oc{display:flex;flex-direction:column;padding:6px 3px;width:56px;flex-shrink:0;gap:56px;padding-top:80px}
+.ob{width:50px;height:38px;background:linear-gradient(180deg,#1a1a1a,#111);border:1px solid #3a3a3a;border-radius:3px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;font-size:9px;color:#556655;letter-spacing:0.5px;text-transform:uppercase;transition:all 0.12s;text-align:center;line-height:1.3;user-select:none;padding:0 2px}
+.ob:hover{background:#1a2a1a;border-color:#33aa55;color:#33aa55}
+.ob:active{transform:scale(0.95)}
+.ob.on{background:#0a1a0a;border-color:#00dd66;color:#00dd66;box-shadow:0 0 8px rgba(0,221,102,0.15)}
+.or{display:flex;justify-content:space-between;padding:0 60px;gap:2px}
+.or .ob{width:52px;height:28px;font-size:9px}
+.ot{margin-bottom:3px}.obo{margin-top:3px}
+.sw{flex:1;position:relative}
+.sc{background:#010601;border:3px solid #1a1a1a;aspect-ratio:1/1;position:relative;overflow:hidden;box-shadow:inset 0 0 60px rgba(0,10,0,0.5)}
+.sc::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 1px,rgba(0,255,100,0.004) 1px,rgba(0,255,100,0.004) 2px);pointer-events:none;z-index:50}
+.rc{width:100%;height:100%;position:absolute;top:0;left:0;z-index:1}
+.ol{position:absolute;inset:0;z-index:10;padding:0;pointer-events:none}
+.ol *{pointer-events:auto}
+.hdr{position:absolute;top:32px;left:14px;z-index:12;pointer-events:none}
+.hdr-name{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:#00ee66;letter-spacing:6px;text-transform:uppercase;line-height:1;text-shadow:0 0 20px rgba(0,238,85,0.15)}
+.hdr-sub{font-size:13px;color:#00bb55;letter-spacing:3px;text-transform:uppercase;margin-top:4px}
+.ht{position:absolute;top:6px;right:12px;font-size:9px;color:#00884480;letter-spacing:1px;z-index:11;text-align:right}
+.hb{position:absolute;bottom:6px;left:12px;right:12px;display:flex;justify-content:space-between;font-size:8px;color:#00884480;letter-spacing:1px;z-index:11}
+.scan-ind{position:absolute;top:6px;left:12px;font-size:8px;color:#00884480;letter-spacing:1px;z-index:11}
+.feed{position:absolute;top:88px;left:14px;right:14px;bottom:28px;z-index:15;pointer-events:none;overflow:hidden}
+.feed-line{font-size:12px;line-height:1.7;color:#00dd66;white-space:pre}
+.feed-line .lbl{color:#00aa55}
+.feed-line .hd{color:#00ff77;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:600;letter-spacing:2px}
+.feed-line .proj-title{color:#00ff77;font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px}
+.feed-line .am{color:#ddaa00}
+.dl-prompt{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:20;display:none}
+.dl-prompt .dl-text{font-size:11px;color:#00aa55;letter-spacing:2px;margin-top:16px}
+.dl-prompt .dl-btn{margin-top:16px;padding:10px 28px;background:transparent;border:1px solid #00dd66;color:#00dd66;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;cursor:pointer;text-transform:uppercase;transition:all 0.15s;text-decoration:none;display:inline-block}
+.dl-prompt .dl-btn:hover{background:rgba(0,221,102,0.1);box-shadow:0 0 12px rgba(0,221,102,0.2)}
+.dl-prompt .dl-btn:active{transform:scale(0.97)}
+.cursor-blink{display:inline;animation:cbk 0.6s step-end infinite;color:#00ee66}
+@keyframes cbk{0%,100%{opacity:1}50%{opacity:0}}
+.kr{display:flex;justify-content:space-between;padding:6px 24px 2px}
+.kg{text-align:center}
+.kn{width:32px;height:32px;background:radial-gradient(circle at 40% 35%,#2a2a2a,#111);border:2px solid #3a3a3a;border-radius:50%;cursor:pointer;position:relative;transition:transform 0.15s ease}
+.kn:hover{border-color:#555}
+.kn-tick{position:absolute;top:3px;left:50%;width:2px;height:10px;background:#666;transform:translateX(-50%);border-radius:1px}
+.kl{font-size:7px;color:#555;letter-spacing:1px;margin-top:3px;font-family:'Share Tech Mono',monospace;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div class="bg-overlay"></div>
+
+<div class="mw"><div class="mu"><div class="bz">
+<div class="or ot">
+  <div class="ob" data-t="exp">EXP</div>
+  <div class="ob" data-t="comms">COMMS</div>
+  <div class="ob" id="resume-btn" style="color:#ddaa00">RESUME</div>
+  <div class="ob" style="opacity:0.2">—</div>
+  <div class="ob" data-t="erase" style="color:#886633">ERASE</div>
+</div>
+<div class="mi">
+<div class="oc">
+  <div class="ob" data-t="edu">EDU</div>
+  <div class="ob" data-t="astro">ASTRO</div>
+  <div class="ob" data-t="rkt">RKTRY</div>
+  <div class="ob" data-t="fpga">FPGA</div>
+</div>
+<div class="sw"><div class="sc" id="sc">
+  <canvas class="rc" id="cv"></canvas>
+  <div class="ol">
+    <div class="hdr" id="hero"><div class="hdr-name">Nathaniel Budz</div><div class="hdr-sub">Computer Engineering</div></div>
+    <div class="scan-ind" id="scanLabel">140°x5° RWS</div>
+    <div class="ht"><span id="utc">00:00Z</span><br>SRC PD</div>
+    <div class="hb"><span>MFD-01</span><span id="scanMode">RWS</span><span>DATA</span></div>
+  </div>
+  <div class="feed" id="feed"></div>
+  <div class="dl-prompt" id="dlPrompt">
+    <div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:#00ee66;letter-spacing:6px;text-transform:uppercase;text-shadow:0 0 20px rgba(0,238,85,0.15)">Nathaniel Budz</div>
+    <div style="font-size:13px;color:#00bb55;letter-spacing:3px;text-transform:uppercase;margin-top:4px">Computer Engineering</div>
+    <div class="dl-text">DOWNLOAD FULL RESUME</div>
+    <a class="dl-btn" href="resume.pdf" download="Nathaniel_Budz_Resume.pdf">DOWNLOAD .PDF</a>
+  </div>
+</div></div>
+<div class="oc">
+  <div class="ob" data-t="hw">HW</div>
+  <div class="ob" data-t="sw">SW</div>
+  <div class="ob" data-t="cad">CAD</div>
+  <div class="ob" data-t="cyber">CYBER</div>
+</div>
+</div>
+<div class="or obo">
+  <div class="ob" data-t="erase" style="color:#886633">CLR</div>
+  <div class="ob" style="opacity:0.2">—</div>
+  <div class="ob" style="opacity:0.2">—</div>
+  <div class="ob" style="opacity:0.2">—</div>
+  <div class="ob" style="opacity:0.2">—</div>
+</div>
+<div class="kr">
+  <div class="kg"><div class="kn" id="k-brt"><div class="kn-tick"></div></div><div class="kl">BRT</div></div>
+  <div class="kg"><div class="kn" id="k-gain"><div class="kn-tick"></div></div><div class="kl">GAIN</div></div>
+  <div class="kg"><div class="kn" id="k-con"><div class="kn-tick"></div></div><div class="kl">CON</div></div>
+  <div class="kg"><div class="kn" id="k-scan"><div class="kn-tick"></div></div><div class="kl">SCAN</div></div>
+</div>
+</div></div></div>
+
+<script>
+var cv=document.getElementById('cv'),c=cv.getContext('2d'),W,H;
+var brt=0.35,fade=0.035,gainOffset=0,gainPos=0,gainSteps=5;
+var scanModes=[
+  {name:'RWS',label:'140\u00b0x5\u00b0 RWS',left:0,right:1,speed:1.2,bars:8},
+  {name:'TWS',label:'60\u00b0x4\u00b0 TWS',left:0.29,right:0.71,speed:1.8,bars:6},
+  {name:'ACM',label:'20\u00b0x6\u00b0 ACM',left:0.39,right:0.61,speed:3.0,bars:4},
+  {name:'VS',label:'40\u00b0x2\u00b0 VS',left:0.22,right:0.78,speed:1.0,bars:10},
+  {name:'SAM',label:'10\u00b0x1\u00b0 SAM',left:0.44,right:0.56,speed:4.5,bars:3}
+];
+var scanIdx=0,scan=scanModes[0],sweepX=scan.left,sweepDir=1;
+function getSpeed(){return scan.speed+gainOffset}
+var blips=[];for(var i=0;i<10;i++)blips.push({x:Math.random(),y:0.08+Math.random()*0.84,bright:0});
+function resize(){var r=cv.parentElement.getBoundingClientRect();cv.width=r.width*2;cv.height=r.height*2;W=cv.width;H=cv.height}
+resize();
+window.addEventListener('resize',resize);
+
+function draw(){
+  c.fillStyle='rgba(1,6,1,'+fade+')';c.fillRect(0,0,W,H);
+  var gA=0.07*brt,lPx=scan.left*W,rPx=scan.right*W;
+  c.strokeStyle='rgba(0,180,100,'+gA+')';c.lineWidth=0.8;
+  var cols=scan.bars+2;for(var i=0;i<=cols;i++){var x=lPx+(rPx-lPx)*(i/cols);c.beginPath();c.moveTo(x,0);c.lineTo(x,H);c.stroke()}
+  for(var j=1;j<scan.bars;j++){var y=(j/scan.bars)*H;c.beginPath();c.moveTo(lPx,y);c.lineTo(rPx,y);c.stroke()}
+  c.strokeStyle='rgba(0,180,100,'+(gA*2)+')';c.lineWidth=1.2;c.strokeRect(lPx,0,rPx-lPx,H);
+  if(scan.left>0){c.fillStyle='rgba(1,4,1,0.06)';c.fillRect(0,0,lPx,H);c.fillRect(rPx,0,W-rPx,H)}
+  var mid=(lPx+rPx)/2;c.strokeStyle='rgba(0,180,100,'+(gA*1.2)+')';c.lineWidth=0.8;c.beginPath();c.moveTo(mid,0);c.lineTo(mid,H);c.stroke();
+  var spd=getSpeed();sweepX+=spd/W*2*sweepDir;
+  if(sweepX>=scan.right){sweepX=scan.right;sweepDir=-1}if(sweepX<=scan.left){sweepX=scan.left;sweepDir=1}
+  var sPx=sweepX*W,trailW=20*(scan.right-scan.left);
+  var g=c.createLinearGradient(sPx-trailW*sweepDir,0,sPx,0);
+  g.addColorStop(0,'rgba(0,150,80,0)');g.addColorStop(1,'rgba(0,150,80,'+(0.2*brt)+')');
+  c.fillStyle=g;c.fillRect(sPx-trailW*sweepDir,0,trailW*sweepDir,H);
+  c.strokeStyle='rgba(0,200,100,'+(0.4*brt)+')';c.lineWidth=1.5;c.beginPath();c.moveTo(sPx,0);c.lineTo(sPx,H);c.stroke();
+  for(var b=0;b<blips.length;b++){var bp=blips[b],dist=Math.abs(sweepX-bp.x);
+    if(bp.x>=scan.left&&bp.x<=scan.right&&dist<0.012)bp.bright=1;else bp.bright*=0.997;
+    if(bp.bright>0.03){var bx=bp.x*W,by=bp.y*H,a=bp.bright*Math.min(brt*2,1);
+      c.fillStyle='rgba(0,'+Math.floor(200*a)+','+Math.floor(80*a)+','+a+')';c.fillRect(bx-3,by-2,6,4);
+      if(bp.bright>0.6){c.fillStyle='rgba(0,'+Math.floor(150*a)+','+Math.floor(60*a)+','+(a*0.2)+')';c.fillRect(bx-6,by-4,12,8)}}}
+  requestAnimationFrame(draw)}
+draw();
+
+function setKnob(id,deg){document.getElementById(id).style.transform='rotate('+deg+'deg)'}
+function setScan(idx){scanIdx=idx;scan=scanModes[idx];sweepX=scan.left;sweepDir=1;gainOffset=0;gainPos=0;setKnob('k-gain',0);
+  document.getElementById('scanLabel').textContent=scan.label;document.getElementById('scanMode').textContent=scan.name}
+var brtPos=0,brtSteps=5,conPos=0,conSteps=5;
+document.getElementById('k-brt').addEventListener('click',function(){brtPos++;if(brtPos>brtSteps){brtPos=0;brt=0.35}else{brt=0.35-(brtPos*0.05);if(brt<0.1)brt=0.1}setKnob('k-brt',(brtPos/brtSteps)*270)});
+document.getElementById('k-gain').addEventListener('click',function(){gainPos++;if(gainPos>gainSteps){gainPos=0;gainOffset=0}else{gainOffset=gainPos*0.5}setKnob('k-gain',(gainPos/gainSteps)*270)});
+document.getElementById('k-con').addEventListener('click',function(){conPos++;if(conPos>conSteps){conPos=0;fade=0.035}else{fade=0.035+(conPos*0.015)}setKnob('k-con',(conPos/conSteps)*270)});
+document.getElementById('k-scan').addEventListener('click',function(){setScan((scanIdx+1)%scanModes.length);setKnob('k-scan',(scanIdx/(scanModes.length-1))*270)});
+
+var feed=document.getElementById('feed'),typing=false,queue=[],active={};
+var projHeaderRendered=false,resumeMode=false;
+var projKeys=['astro','rkt','fpga'];
+
+var sections={
+  edu:[{t:'head',v:'EDUCATION'},{t:'title',v:'Illinois Institute of Technology'},{t:'row',v:'B.S. Computer Engineering + Cybersecurity'},{t:'row',v:'Expected May 2027'}],
+  astro:[{t:'projhead'},{t:'title',v:'ASTRO Systems \u2014 Co-Founder & Systems Engineer'},{t:'row',v:'DARPA Heavy Lift Challenge entry'},{t:'row',v:'360\u00b0 airfoil VTOL drone, gimbaled propulsion'},{t:'row',v:'Custom flight computer + PCB design'},{t:'row',v:'CFD analysis, 3D printed prototypes'},{t:'row',v:'BOM management + vendor sourcing'}],
+  rkt:[{t:'projhead'},{t:'title',v:'IIT Rocketry \u2014 Electronic Controls Lead'},{t:'row',v:'Custom avionics PCB, hand-soldered'},{t:'row',v:'Wiring diagrams + test documentation'},{t:'row',v:'Closed-loop airbrake control system'},{t:'row',v:'10,000 ft apogee validated \u00b15%'}],
+  fpga:[{t:'projhead'},{t:'title',v:'VHDL Digital Circuit Design on FPGA'},{t:'row',v:'Artix-7 FPGA, Xilinx Vivado'},{t:'row',v:'BCD converter, FSM, display driver'}],
+  hw:[{t:'head',v:'SKILLS \u2014 HARDWARE'},{t:'row',v:'PCB Design + Assembly'},{t:'row',v:'Soldering (THT + SMD)'},{t:'row',v:'Oscilloscope / Multimeter'},{t:'row',v:'3D Printing'},{t:'row',v:'Wiring + Harness Assembly'}],
+  sw:[{t:'head',v:'SKILLS \u2014 SOFTWARE'},{t:'row',v:'Python / C/C++ / VHDL'},{t:'row',v:'Java / Assembly'},{t:'row',v:'MATLAB + Simulink'},{t:'row',v:'Git / GitHub'}],
+  cad:[{t:'head',v:'SKILLS \u2014 DESIGN TOOLS'},{t:'row',v:'EasyEDA / KiCad / Altium'},{t:'row',v:'AutoCAD / Vivado'}],
+  cyber:[{t:'head',v:'SKILLS \u2014 CYBER + IT'},{t:'row',v:'Linux Administration'},{t:'row',v:'Wireshark / Nmap'},{t:'row',v:'Penetration Testing'},{t:'row',v:'Network Configuration'}],
+  exp:[{t:'head',v:'EXPERIENCE'},{t:'title',v:'Micro Electronics Inc. \u2014 Sales/Tech'},{t:'row',v:'Jul 2021 \u2014 Aug 2023'},{t:'row',v:'Test equipment, soldering, PCB kits, 3D printers'},{t:'row',v:''},{t:'title',v:'STEAM Academy \u2014 Mentor'},{t:'row',v:'Aug 2024 \u2014 Feb 2025'},{t:'row',v:'Electronics assembly + soldering instruction'}],
+  comms:[{t:'head',v:'CONTACT'},{t:'row',l:'EMAIL',v:'nathan34003@gmail.com'},{t:'row',l:'PHONE',v:'708-778-1210'},{t:'row',l:'LOC',v:'Chicago, IL'},{t:'row',l:'LINKEDIN',v:'nathaniel-budz'},{t:'row',l:'WEB',v:'astrosystems.us'}]
+};
+
+function recalcProjHeader(){for(var i=0;i<projKeys.length;i++){if(active[projKeys[i]])return true}return false}
+
+function renderLine(item){
+  var div=document.createElement('div');div.className='feed-line';
+  if(item.t==='head')div.innerHTML='<span class="hd">// '+item.v+'</span>';
+  else if(item.t==='title')div.innerHTML='<span class="proj-title">'+item.v+'</span>';
+  else{var hl=item.l&&item.l.length>0;
+    if(hl)div.innerHTML='<span class="lbl">'+item.l.padEnd(8,' ')+'</span> <span class="'+(item.am?'am':'')+'">'+( item.v||'')+'</span>';
+    else div.innerHTML='<span class="'+(item.am?'am':'')+'">'+( item.v||'')+'</span>'}
+  return div}
+
+function rebuild(){
+  feed.innerHTML='';var keys=Object.keys(active);var phd=false;
+  keys.filter(function(k){return active[k].done}).forEach(function(key){
+    sections[key].forEach(function(item){
+      if(item.t==='projhead'){if(!phd){var d=document.createElement('div');d.className='feed-line';d.innerHTML='<span class="hd">// PROJECTS</span>';feed.appendChild(d);phd=true}return}
+      feed.appendChild(renderLine(item))});
+    var gap=document.createElement('div');gap.className='feed-line';gap.innerHTML=' ';feed.appendChild(gap)});
+  feed.scrollTop=feed.scrollHeight;projHeaderRendered=phd;if(!typing)processQueue()}
+
+function typeSection(key,cb){var lines=sections[key];if(!lines){if(cb)cb();return}var idx=0;
+  function next(){if(!active[key]){if(cb)cb();return}
+    if(idx>=lines.length){active[key].done=true;var gap=document.createElement('div');gap.className='feed-line';gap.innerHTML=' ';feed.appendChild(gap);if(cb)cb();return}
+    var item=lines[idx];idx++;
+    if(item.t==='projhead'){if(!projHeaderRendered){var d=document.createElement('div');d.className='feed-line';d.innerHTML='<span class="hd">// PROJECTS</span>';feed.appendChild(d);feed.scrollTop=feed.scrollHeight;projHeaderRendered=true}setTimeout(next,80)}
+    else if(item.t==='head'){feed.appendChild(renderLine(item));feed.scrollTop=feed.scrollHeight;setTimeout(next,80)}
+    else if(item.t==='title'){
+      var div=document.createElement('div');div.className='feed-line';
+      var val=document.createElement('span');val.className='proj-title';
+      var cur=document.createElement('span');cur.className='cursor-blink';cur.textContent='\u2588';
+      div.appendChild(val);div.appendChild(cur);feed.appendChild(div);feed.scrollTop=feed.scrollHeight;
+      var full=item.v,ci=0;
+      function tt(){if(!active[key]){cur.remove();if(cb)cb();return}
+        if(ci<full.length){val.textContent+=full[ci];ci++;feed.scrollTop=feed.scrollHeight;setTimeout(tt,22+Math.random()*15)}
+        else{cur.remove();setTimeout(next,60)}}tt()}
+    else{
+      var div=document.createElement('div');div.className='feed-line';
+      var hl=item.l&&item.l.length>0;
+      if(hl){var lbl=document.createElement('span');lbl.className='lbl';lbl.textContent=item.l.padEnd(8,' ');div.appendChild(lbl);div.appendChild(document.createTextNode(' '))}
+      var val=document.createElement('span');val.className=item.am?'am':'';
+      var cur=document.createElement('span');cur.className='cursor-blink';cur.textContent='\u2588';
+      div.appendChild(val);div.appendChild(cur);feed.appendChild(div);feed.scrollTop=feed.scrollHeight;
+      var full=item.v||'',ci=0;
+      function tc(){if(!active[key]){cur.remove();if(cb)cb();return}
+        if(ci<full.length){val.textContent+=full[ci];ci++;feed.scrollTop=feed.scrollHeight;setTimeout(tc,18+Math.random()*12)}
+        else{cur.remove();setTimeout(next,40)}}tc()}}next()}
+
+function processQueue(){if(typing||queue.length===0)return;typing=true;var key=queue.shift();
+  if(!active[key]){typing=false;processQueue();return}typeSection(key,function(){typing=false;processQueue()})}
+
+function toggleSection(key){
+  if(active[key]){delete active[key];if(!recalcProjHeader())projHeaderRendered=false;rebuild()}
+  else{active[key]={done:false};queue.push(key);if(!typing)processQueue()}}
+
+function exitResumeMode(){
+  resumeMode=false;document.getElementById('dlPrompt').style.display='none';
+  document.getElementById('hero').style.display='block';feed.style.display='block';
+  document.getElementById('resume-btn').classList.remove('on')}
+
+function enterResumeMode(){
+  resumeMode=true;active={};queue=[];typing=false;projHeaderRendered=false;
+  feed.innerHTML='';feed.style.display='none';
+  document.getElementById('hero').style.display='none';
+  document.getElementById('dlPrompt').style.display='block';
+  document.querySelectorAll('.ob').forEach(function(x){x.classList.remove('on')});
+  document.getElementById('resume-btn').classList.add('on')}
+
+document.getElementById('resume-btn').addEventListener('click',function(){
+  if(resumeMode)exitResumeMode();else enterResumeMode()});
+
+document.querySelectorAll('.ob[data-t]').forEach(function(btn){btn.addEventListener('click',function(){
+    if(resumeMode)exitResumeMode();
+    var t=this.getAttribute('data-t');
+    if(t==='erase'){active={};queue=[];typing=false;feed.innerHTML='';projHeaderRendered=false;document.querySelectorAll('.ob').forEach(function(x){x.classList.remove('on')});return}
+    if(!sections[t])return;this.classList.toggle('on');toggleSection(t)})});
+
+function tick(){var d=new Date();document.getElementById('utc').textContent=String(d.getUTCHours()).padStart(2,'0')+':'+String(d.getUTCMinutes()).padStart(2,'0')+'Z'}
+setInterval(tick,1000);tick();
+
+active['edu']={done:false};queue.push('edu');document.querySelector('.ob[data-t="edu"]').classList.add('on');processQueue();
+</script>
+</body>
+</html>
