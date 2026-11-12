@@ -294,7 +294,8 @@
       // rises into place with the page. Loose dust fades in over the first part of the approach.
       var r = section.getBoundingClientRect();
       var stageH = stage === canvas ? view.h : stage.clientHeight;
-      var stageTop = r.top > 0 ? r.top : Math.min(0, r.bottom - stageH);
+      // Read the stage's real position so any transform on it (e.g. a parallax exit) carries the jet too.
+      var stageTop = stage === canvas ? (r.top > 0 ? r.top : Math.min(0, r.bottom - stageH)) : stage.getBoundingClientRect().top;
       var shift = -2 * (stageTop + stageH / 2 - view.h / 2) / view.h;
       var presence = smooth(clamp((view.h - r.top) / (view.h * 0.6), 0, 1));
 

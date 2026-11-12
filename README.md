@@ -6,6 +6,8 @@ It's a "coming soon" page for now. A YF-23 and an F-35B fly behind the title, re
 
 Scrolling down sends the ASCII jets flying off screen while the F-35B assembles out of a cloud of ink dots on the same dotted backdrop. The section then pins and the camera orbits the jet as you keep scrolling. Drag with the left mouse button to rotate it; double-click to reset.
 
+After the orbit comes a stack of full-screen panels. The first one opens with a dark PROJECTS // header strip and holds the first project; each later project gets its own `<section class="panel">`. Each panel slides up over the one before it, which falls back at half speed and dims. Add a project by adding a panel after the first one in `index.html`; the transition picks it up automatically, and the model credit footer belongs in the last panel.
+
 ## Files
 
 ```

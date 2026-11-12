@@ -22,7 +22,7 @@ main{position:relative;height:100%;display:flex;align-items:center;justify-conte
 .mark::before{content:"";position:absolute;inset:-14px -22px;z-index:-1;pointer-events:none;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);background:radial-gradient(closest-side,rgba(243,243,240,.72),rgba(243,243,240,0));-webkit-mask-image:radial-gradient(closest-side,#000 55%,transparent);mask-image:radial-gradient(closest-side,#000 55%,transparent)}
 h1{font-family:'Archivo',system-ui,sans-serif;font-weight:800;font-stretch:118%;font-size:min(33px,7.2vw);line-height:1;letter-spacing:-.025em}
 .soon{font-size:13px;font-weight:500;letter-spacing:.32em;text-transform:uppercase;color:var(--dim);padding-left:.32em}
-.credit{position:relative;padding:24px 16px 12px;font-size:11px;color:var(--dim)}
+.credit{position:relative;padding:24px clamp(16px,4vw,56px) 12px;font-size:11px;color:var(--dim)}
 .credit a{color:inherit}
 .cue{position:absolute;left:50%;bottom:40px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:10px;font-size:10px;letter-spacing:.32em;padding-left:.32em;text-transform:uppercase;color:var(--dim);text-decoration:none}
 .cue::after{content:"";width:1px;height:28px;background:linear-gradient(var(--dim),transparent);transform-origin:top;animation:cue 2.4s ease-in-out infinite}
@@ -35,6 +35,32 @@ h1{font-family:'Archivo',system-ui,sans-serif;font-weight:800;font-stretch:118%;
 .stage.dragging{cursor:grabbing}
 .label{position:absolute;left:16px;bottom:12px;display:flex;flex-direction:column;gap:6px;font-size:11px;color:var(--dim)}
 .label strong{font-weight:500;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink)}
+/* Panel stack: each panel slides up over the one before it, which falls back at half speed and
+   darkens. The F-35 section is dimmed by the fixed .dim layer (its jet is on a fixed canvas);
+   panels are dimmed by their own ::after, driven by --shade. */
+.dim{position:fixed;inset:0;background:var(--ink);opacity:0;pointer-events:none}
+.panel{--shade:0;--gutter:clamp(16px,4vw,56px);position:relative;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;background:var(--bg);border-radius:16px 16px 0 0;box-shadow:0 -1px 0 rgba(18,22,29,.08),0 -28px 56px -28px rgba(18,22,29,.4)}
+.panel::after{content:"";position:absolute;inset:0;border-radius:inherit;background:var(--ink);opacity:var(--shade);pointer-events:none}
+.display{font-family:'Archivo',system-ui,sans-serif;font-weight:800;font-stretch:118%;line-height:.88;letter-spacing:-.04em;text-transform:uppercase}
+/* PROJECTS header: a thin inverted strip at the top of the first project's panel, so it reads as
+   a section header rather than a page of its own. */
+.projects-head{background:var(--ink);color:var(--bg);border-radius:inherit;padding:clamp(24px,5vh,48px) var(--gutter)}
+.projects-head h2{font-size:clamp(36px,8vw,128px);white-space:nowrap}
+.project{flex:1;min-height:100vh;min-height:100svh;display:grid;gap:40px;align-content:space-between;padding:clamp(48px,10vh,112px) var(--gutter) 48px}
+.project-head{display:flex;flex-direction:column;gap:20px}
+.project-index{font-size:12px;letter-spacing:.24em;color:var(--dim)}
+.project h3{font-size:clamp(34px,6vw,96px);overflow-wrap:anywhere}
+.project-role{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+.project-body{display:flex;flex-direction:column;gap:20px;max-width:560px}
+.project-lede{font-size:15px;line-height:1.5}
+.project-points{list-style:none;font-size:13px;line-height:1.5;border-top:1px solid rgba(18,22,29,.14)}
+.project-points li{padding:10px 0;border-bottom:1px solid rgba(18,22,29,.14)}
+.project-points li::before{content:"// ";color:var(--dim)}
+.project-link{align-self:flex-start;font-size:13px;color:var(--ink)}
+@media (min-width:900px){
+  .project{grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);align-content:stretch}
+  .project-body{align-self:end;justify-self:end;width:100%}
+}
 </style>
 </head>
 <body>
@@ -54,7 +80,30 @@ h1{font-family:'Archivo',system-ui,sans-serif;font-weight:800;font-stretch:118%;
     <p class="label"><strong>F-35B Lightning II</strong></p>
   </div>
 </section>
-<footer class="credit"><a href="https://sketchfab.com/3d-models/lockheed-martin-f-35b-lightning-ii-5d54a6af45974ad386ae74d42b33374a">F-35B model</a> by AF267, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></footer>
+<div class="dim" aria-hidden="true"></div>
+<section class="panel" id="projects" aria-labelledby="projects-title">
+  <header class="projects-head">
+    <h2 class="display" id="projects-title">Projects <span aria-hidden="true">//</span></h2>
+  </header>
+  <article class="project" id="astro" aria-labelledby="astro-title">
+    <div class="project-head">
+      <p class="project-index">01 / 01</p>
+      <h3 class="display" id="astro-title">ASTRO Systems</h3>
+      <p class="project-role">Co-Founder &amp; Systems Engineer</p>
+    </div>
+    <div class="project-body">
+      <p class="project-lede">DARPA Heavy Lift Challenge entry.</p>
+      <ul class="project-points">
+        <li>360° airfoil VTOL drone, gimbaled propulsion</li>
+        <li>Custom flight computer + PCB design</li>
+        <li>CFD analysis, 3D printed prototypes</li>
+        <li>BOM management + vendor sourcing</li>
+      </ul>
+      <a class="project-link" href="https://astrosystems.us">astrosystems.us ↗</a>
+    </div>
+  </article>
+  <footer class="credit"><a href="https://sketchfab.com/3d-models/lockheed-martin-f-35b-lightning-ii-5d54a6af45974ad386ae74d42b33374a">F-35B model</a> by AF267, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></footer>
+</section>
 <script src="assets/js/jet-ascii.js"></script>
 <script src="assets/js/jet-dots.js"></script>
 <script>
@@ -107,6 +156,35 @@ var dots = JetDots.start(document.getElementById('dots'), document.getElementByI
   hover: false,
   stage: document.querySelector('.stage'),
 });
+
+// Panel stack: as each panel slides up over the layer before it, that layer drifts up at half
+// speed (it seems to fall back) and darkens. The first panel covers the F-35 section, whose dots
+// follow the stage's position; every later panel covers the panel before it.
+(function () {
+  var stage = document.querySelector('.stage');
+  var dim = document.querySelector('.dim');
+  var panels = [].slice.call(document.querySelectorAll('.panel'));
+  var parallax = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 0.5;
+  var SHADE = 0.55;
+  var slide = function () {
+    var vh = innerHeight;
+    panels.forEach(function (panel, i) {
+      // Layout position (offsetTop ignores the transform this panel gets when the next one arrives).
+      var p = Math.min(1, Math.max(0, 1 - (panel.offsetTop - scrollY) / vh));
+      var shift = p > 0 && parallax ? 'translateY(' + (p * parallax * (i ? vh : stage.clientHeight)).toFixed(1) + 'px)' : '';
+      if (i === 0) {
+        stage.style.transform = shift;
+        dim.style.opacity = (p * SHADE).toFixed(3);
+      } else {
+        panels[i - 1].style.transform = shift;
+        panels[i - 1].style.setProperty('--shade', (p * SHADE).toFixed(3));
+      }
+    });
+  };
+  addEventListener('scroll', slide, { passive: true });
+  addEventListener('resize', slide);
+  slide();
+})();
 </script>
 </body>
 </html>
