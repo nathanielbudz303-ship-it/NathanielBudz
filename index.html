@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nathaniel Budz</title>
-<meta name="description" content="NathanielBudz.com is coming soon.">
+<meta name="description" content="NathanielBudz.com is a work in progress.">
 <meta name="theme-color" content="#f3f3f0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -48,28 +48,36 @@ h1{font-family:'Archivo',system-ui,sans-serif;font-weight:800;font-stretch:118%;
 .projects-head h2{font-size:clamp(36px,8vw,128px);white-space:nowrap}
 /* Project deck: cards stick near the top and stack as you scroll. Each one lands a tab's height
    lower than the last, so earlier cards stay visible as tabs; covered cards shrink and darken. */
-.deck{--tab:clamp(40px,6vh,56px);--stick:clamp(56px,11vh,112px);--pad:clamp(12px,1.6vw,20px);padding:clamp(40px,8vh,80px) var(--gutter) clamp(96px,18vh,180px)}
-.card{--i:0;--depth:0;position:sticky;top:calc(var(--stick) + var(--i) * var(--tab));height:min(72vh,680px);height:min(72svh,680px);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--pad);padding:var(--pad);background:#e5e5df;border-radius:18px;transform-origin:50% 0;box-shadow:0 -1px 0 rgba(18,22,29,.05),0 24px 48px -28px rgba(18,22,29,.45)}
+.deck{--tab:clamp(34px,5.5vh,56px);--stick:clamp(48px,9vh,112px);--pad:clamp(12px,1.6vw,20px);padding:clamp(40px,8vh,80px) var(--gutter) clamp(96px,18vh,180px)}
+.card{--i:0;--depth:0;position:sticky;top:calc(var(--stick) + var(--i) * var(--tab));min-height:min(62vh,600px);display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:var(--pad);padding:var(--pad);background:#e5e5df;border-radius:18px;transform-origin:50% 0;box-shadow:0 -1px 0 rgba(18,22,29,.05),0 24px 48px -28px rgba(18,22,29,.45)}
 .card+.card{margin-top:26vh}
+/* Screens too short for the tallest card: a plain list instead of a stacking deck. */
+.deck--flat .card{position:relative;top:auto;height:auto!important}
+.deck--flat .card+.card{margin-top:24px}
 .card::after{content:"";position:absolute;inset:0;border-radius:inherit;background:var(--ink);opacity:var(--depth);pointer-events:none}
 .card-text{display:flex;flex-direction:column;min-width:0;padding:0 clamp(4px,.8vw,12px) clamp(4px,.8vw,12px)}
 .card-tab{display:flex;align-items:center;gap:14px;height:calc(var(--tab) - var(--pad));font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim)}
 .card-tab span:first-child{color:var(--ink)}
-.card h3{font-size:clamp(32px,5vw,84px);margin-top:clamp(8px,2vh,24px);overflow-wrap:anywhere}
-.card-foot{margin-top:auto;display:flex;flex-direction:column;gap:14px;max-width:480px}
+.card h3{font-size:clamp(30px,min(5vw,7.5vh),84px);margin-top:clamp(8px,2vh,24px);overflow-wrap:anywhere}
+.card-foot{margin-top:auto;display:flex;flex-direction:column;gap:clamp(8px,1.6vh,14px);max-width:540px}
 .card-role{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
-.card-lede{font-size:14px;line-height:1.5}
+.card-lede{font-size:14px;line-height:1.45}
 .card-points{list-style:none;font-size:12px;line-height:1.45;border-top:1px solid rgba(18,22,29,.14)}
-.card-points li{padding:8px 0;border-bottom:1px solid rgba(18,22,29,.14)}
+.card-points li{padding:clamp(5px,.9vh,8px) 0;border-bottom:1px solid rgba(18,22,29,.14)}
 .card-points li::before{content:"// ";color:var(--dim)}
 .pill{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;background:var(--ink);color:var(--bg);font-size:11px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none}
 .pill:hover{background:#2a303a}
 /* Picture slot: dark block with the site's dot texture and the project number, until real images. */
 .card-media{position:relative;min-height:0;border-radius:12px;overflow:hidden;background:var(--ink) radial-gradient(circle,rgba(243,243,240,.16) 1px,transparent 1.4px) 0 0/8px 8px;display:flex;align-items:flex-end;justify-content:flex-end;padding:clamp(12px,2vw,28px)}
+.card-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 46%}
 .card-media span{font-family:'Archivo',system-ui,sans-serif;font-weight:800;font-stretch:118%;font-size:clamp(88px,15vw,240px);line-height:.78;letter-spacing:-.04em;color:transparent;-webkit-text-stroke:1.5px rgba(243,243,240,.55)}
 @media (max-width:760px){
-  .card{height:auto;min-height:min(74svh,640px);grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(140px,1fr)}
-  .card-foot{margin-top:24px}
+  .deck{--tab:clamp(32px,4.8vh,46px);--stick:clamp(44px,7vh,72px)}
+  .card{min-height:0;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(130px,1fr)}
+  .card-media img{object-position:50% 40%}
+  .card-foot{margin-top:16px}
+  .card-lede{font-size:13px}
+  .card-points{font-size:11.5px}
 }
   .project-body{align-self:end;justify-self:end;width:100%}
 }
@@ -82,7 +90,7 @@ h1{font-family:'Archivo',system-ui,sans-serif;font-weight:800;font-stretch:118%;
   <main>
     <div class="mark">
       <h1>NathanielBudz.com</h1>
-      <p class="soon">Coming soon</p>
+      <p class="soon">Work in progress</p>
     </div>
   </main>
   <a class="cue" href="#f35">Scroll</a>
@@ -103,18 +111,18 @@ h1{font-family:'Archivo',system-ui,sans-serif;font-weight:800;font-stretch:118%;
         <p class="card-tab" aria-hidden="true"><span>01</span><span>ASTRO Systems</span></p>
         <h3 class="display" id="astro-title">ASTRO Systems</h3>
         <div class="card-foot">
-          <p class="card-role">Co-Founder &amp; Systems Engineer</p>
-          <p class="card-lede">DARPA Heavy Lift Challenge entry.</p>
+          <p class="card-role">Co-Founder &amp; Integration Engineer · 2025 – Present</p>
+          <p class="card-lede">3-person aerospace startup building heavy-lift drones with a 360° airfoil body and gimbaled VTOL propulsion (patent pending).</p>
           <ul class="card-points">
-            <li>360° airfoil VTOL drone, gimbaled propulsion</li>
-            <li>Custom flight computer + PCB design</li>
-            <li>CFD analysis, 3D printed prototypes</li>
-            <li>BOM management + vendor sourcing</li>
+            <li>One of 124 teams selected out of 480+ invited to DARPA’s Heavy Lift Challenge (DLC-1 2026)</li>
+            <li>Avionics selection and control algorithms: GPS, flight computer, ESCs, power electronics</li>
+            <li>Remote Pilot in Command; safety and compliance across flight testing</li>
+            <li>Bill of materials, vendor sourcing, sponsorship; multiple flight-ready prototypes</li>
           </ul>
           <a class="pill" href="https://astrosystems.us">astrosystems.us <span aria-hidden="true">↗</span></a>
         </div>
       </div>
-      <div class="card-media" aria-hidden="true"><span>01</span></div>
+      <div class="card-media"><img src="assets/img/astro-darpa-lift-challenge.jpg" alt="Two ASTRO Systems team members in front of the DARPA Lift Challenge photo wall" width="1125" height="1500" loading="lazy" decoding="async"></div>
     </article>
     <article class="card" id="project-2" style="--i:1" aria-labelledby="project-2-title">
       <div class="card-text">
@@ -224,7 +232,34 @@ var dots = JetDots.start(document.getElementById('dots'), document.getElementByI
   var cards = [].slice.call(document.querySelectorAll('.card'));
   var still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var stick = [];
-  var measure = function () { stick = cards.map(function (c) { return parseFloat(getComputedStyle(c).top) || 0; }); };
+  var deck = document.querySelector('.deck');
+  var flat = false;
+  // Every card gets the same height: enough for the tallest card's content (at least ~72% of the
+  // screen), but never more than the deepest card can show while it rests in the stack. If the
+  // content can't fit that, the deck becomes a plain list so nothing ends up hidden.
+  var fit = function () {
+    deck.classList.remove('deck--flat');
+    cards.forEach(function (c) { c.style.height = ''; });
+    var vh = innerHeight;
+    var top0 = parseFloat(getComputedStyle(cards[0]).top) || 0;
+    var tab = cards.length > 1 ? (parseFloat(getComputedStyle(cards[1]).top) || 0) - top0 : 0;
+    var room = vh - top0 - (cards.length - 1) * tab - 16;
+    var tallest = Math.max.apply(null, cards.map(function (c) { return c.offsetHeight; }));
+    flat = tallest > room;
+    if (flat) deck.classList.add('deck--flat');
+    else {
+      var h = Math.round(Math.min(room, Math.max(tallest, Math.min(vh * 0.72, 680))));
+      cards.forEach(function (c) { c.style.height = h + 'px'; });
+    }
+  };
+  var fitW = 0, fitH = 0;
+  var measure = function () { fitW = innerWidth; fitH = innerHeight; fit(); stick = cards.map(function (c) { return parseFloat(getComputedStyle(c).top) || 0; }); };
+  // Phones resize the viewport as the address bar slides in and out while scrolling; re-fitting
+  // then would make the cards jump, so only re-fit on a width change or a large height change.
+  var refit = function () {
+    if (innerWidth !== fitW || Math.abs(innerHeight - fitH) > 120) measure();
+    stack();
+  };
   var stack = function () {
     var vh = innerHeight;
     // How far each card has travelled from the bottom of the screen to its resting spot (0..1).
@@ -234,13 +269,15 @@ var dots = JetDots.start(document.getElementById('dots'), document.getElementByI
     cards.forEach(function (c, i) {
       var depth = 0;
       for (var j = i + 1; j < cards.length; j++) depth += landed[j];
+      if (flat) depth = 0;
       c.style.transform = still || !depth ? '' : 'scale(' + (1 - 0.035 * depth).toFixed(4) + ')';
       c.style.setProperty('--depth', (0.14 * Math.min(depth, 2)).toFixed(3));
     });
   };
   measure();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { measure(); stack(); });
   addEventListener('scroll', stack, { passive: true });
-  addEventListener('resize', function () { measure(); stack(); });
+  addEventListener('resize', refit);
   stack();
 })();
 </script>
