@@ -6,7 +6,7 @@ It's a "coming soon" page for now. A YF-23 and an F-35B fly behind the title, re
 
 Scrolling down sends the ASCII jets flying off screen while the F-35B assembles out of a cloud of ink dots on the same dotted backdrop. The section then pins and the camera orbits the jet as you keep scrolling. Drag with the left mouse button to rotate it; double-click to reset.
 
-After the orbit comes a stack of full-screen panels. The first one opens with a dark PROJECTS // header strip and holds the first project; each later project gets its own `<section class="panel">`. Each panel slides up over the one before it, which falls back at half speed and dims. Add a project by adding a panel after the first one in `index.html`; the transition picks it up automatically, and the model credit footer belongs in the last panel.
+After the orbit, the Projects panel slides up over the F-35 section, which falls back at half speed and dims. It opens with a dark PROJECTS // header strip, then a deck of project cards: each card sticks near the top and the next one stacks onto it a tab's height lower, so earlier cards stay visible as tabs while they shrink and darken. Add a project by adding an `<article class="card">` to the `.deck` in `index.html` with the next `--i` value (0, 1, 2...).
 
 ## Files
 
@@ -18,6 +18,10 @@ assets/jets/             Point clouds (.bin) and manifest (jets.json)
 tools/                   Python scripts that rebuild the point clouds
 CNAME                    Custom domain for GitHub Pages
 ```
+
+## Updating scripts
+
+GitHub Pages lets browsers cache files for 10 minutes. When you change anything in `assets/js/`, bump the `?v=` number on both `<script>` tags in `index.html` so visitors never get the new page with an old script.
 
 ## Running locally
 

@@ -998,5 +998,58 @@
     };
   }
 
-  window.JetAscii = { start: start, defaults: DEFAULTS, ramps: RAMPS, themes: THEMES };
+  // Paints the empty-cell dot grid that start() draws behind the jets as a repeating CSS background
+  // on another element, so opaque sections (like the project panels) carry the same dot matrix.
+  function backdrop(element, options) {
+    var o = {};
+    Object.keys(DEFAULTS).forEach(function (k) { o[k] = DEFAULTS[k]; });
+    Object.keys(options || {}).forEach(function (k) { o[k] = options[k]; });
+    var key = '';
+
+    function paint() {
+      var dpr = Math.min(window.devicePixelRatio || 1, o.maxDpr);
+      var cw = Math.max(3, Math.round(o.cellW * dpr));
+      var ch = Math.max(4, Math.round(o.cellH * dpr));
+      var next = [cw, ch, dpr].join('|');
+      if (next === key) return;
+      key = next;
+      var c = document.createElement('canvas');
+      c.width = cw;
+      c.height = ch;
+      var x = c.getContext('2d');
+      x.font = o.weight + ' 100px ' + o.font;
+      var advance = x.measureText('M').width / 100;
+      var px = Math.min(cw / advance, ch * 0.92) * o.glyph;
+      // Rasterize the glyph exactly as buildAtlas() does (white on black), then tint it the way the
+      // ASCII shader does, so the dots match the hero's grid pixel for pixel.
+      x.fillStyle = '#000';
+      x.fillRect(0, 0, cw, ch);
+      x.fillStyle = '#fff';
+      x.font = o.weight + ' ' + px.toFixed(2) + 'px ' + o.font;
+      x.textAlign = 'center';
+      x.textBaseline = 'middle';
+      x.fillText('·', cw / 2, ch * 0.53);
+      var img = x.getImageData(0, 0, cw, ch);
+      var ink = hex((THEMES[o.theme] || THEMES.light).ink);
+      for (var i = 0; i < img.data.length; i += 4) {
+        var m = img.data[i] / 255;
+        img.data[i] = Math.round(ink[0] * 255);
+        img.data[i + 1] = Math.round(ink[1] * 255);
+        img.data[i + 2] = Math.round(ink[2] * 255);
+        img.data[i + 3] = Math.round(m * o.dots * 255);
+      }
+      x.putImageData(img, 0, 0);
+      element.style.backgroundImage = 'url(' + c.toDataURL() + ')';
+      element.style.backgroundSize = (cw / dpr) + 'px ' + (ch / dpr) + 'px';
+    }
+
+    var ready = (document.fonts && document.fonts.load ? document.fonts.load(o.weight + ' 12px ' + o.font).catch(function () {}) : Promise.resolve()).then(paint);
+    addEventListener('resize', paint);
+    return {
+      ready: ready,
+      destroy: function () { removeEventListener('resize', paint); },
+    };
+  }
+
+  window.JetAscii = { start: start, backdrop: backdrop, defaults: DEFAULTS, ramps: RAMPS, themes: THEMES };
 })();

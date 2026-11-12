@@ -46,19 +46,31 @@ h1{font-family:'Archivo',system-ui,sans-serif;font-weight:800;font-stretch:118%;
    a section header rather than a page of its own. */
 .projects-head{background:var(--ink);color:var(--bg);border-radius:inherit;padding:clamp(24px,5vh,48px) var(--gutter)}
 .projects-head h2{font-size:clamp(36px,8vw,128px);white-space:nowrap}
-.project{flex:1;min-height:100vh;min-height:100svh;display:grid;gap:40px;align-content:space-between;padding:clamp(48px,10vh,112px) var(--gutter) 48px}
-.project-head{display:flex;flex-direction:column;gap:20px}
-.project-index{font-size:12px;letter-spacing:.24em;color:var(--dim)}
-.project h3{font-size:clamp(34px,6vw,96px);overflow-wrap:anywhere}
-.project-role{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
-.project-body{display:flex;flex-direction:column;gap:20px;max-width:560px}
-.project-lede{font-size:15px;line-height:1.5}
-.project-points{list-style:none;font-size:13px;line-height:1.5;border-top:1px solid rgba(18,22,29,.14)}
-.project-points li{padding:10px 0;border-bottom:1px solid rgba(18,22,29,.14)}
-.project-points li::before{content:"// ";color:var(--dim)}
-.project-link{align-self:flex-start;font-size:13px;color:var(--ink)}
-@media (min-width:900px){
-  .project{grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);align-content:stretch}
+/* Project deck: cards stick near the top and stack as you scroll. Each one lands a tab's height
+   lower than the last, so earlier cards stay visible as tabs; covered cards shrink and darken. */
+.deck{--tab:clamp(40px,6vh,56px);--stick:clamp(56px,11vh,112px);--pad:clamp(12px,1.6vw,20px);padding:clamp(40px,8vh,80px) var(--gutter) clamp(96px,18vh,180px)}
+.card{--i:0;--depth:0;position:sticky;top:calc(var(--stick) + var(--i) * var(--tab));height:min(72vh,680px);height:min(72svh,680px);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--pad);padding:var(--pad);background:#e5e5df;border-radius:18px;transform-origin:50% 0;box-shadow:0 -1px 0 rgba(18,22,29,.05),0 24px 48px -28px rgba(18,22,29,.45)}
+.card+.card{margin-top:26vh}
+.card::after{content:"";position:absolute;inset:0;border-radius:inherit;background:var(--ink);opacity:var(--depth);pointer-events:none}
+.card-text{display:flex;flex-direction:column;min-width:0;padding:0 clamp(4px,.8vw,12px) clamp(4px,.8vw,12px)}
+.card-tab{display:flex;align-items:center;gap:14px;height:calc(var(--tab) - var(--pad));font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim)}
+.card-tab span:first-child{color:var(--ink)}
+.card h3{font-size:clamp(32px,5vw,84px);margin-top:clamp(8px,2vh,24px);overflow-wrap:anywhere}
+.card-foot{margin-top:auto;display:flex;flex-direction:column;gap:14px;max-width:480px}
+.card-role{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+.card-lede{font-size:14px;line-height:1.5}
+.card-points{list-style:none;font-size:12px;line-height:1.45;border-top:1px solid rgba(18,22,29,.14)}
+.card-points li{padding:8px 0;border-bottom:1px solid rgba(18,22,29,.14)}
+.card-points li::before{content:"// ";color:var(--dim)}
+.pill{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;background:var(--ink);color:var(--bg);font-size:11px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none}
+.pill:hover{background:#2a303a}
+/* Picture slot: dark block with the site's dot texture and the project number, until real images. */
+.card-media{position:relative;min-height:0;border-radius:12px;overflow:hidden;background:var(--ink) radial-gradient(circle,rgba(243,243,240,.16) 1px,transparent 1.4px) 0 0/8px 8px;display:flex;align-items:flex-end;justify-content:flex-end;padding:clamp(12px,2vw,28px)}
+.card-media span{font-family:'Archivo',system-ui,sans-serif;font-weight:800;font-stretch:118%;font-size:clamp(88px,15vw,240px);line-height:.78;letter-spacing:-.04em;color:transparent;-webkit-text-stroke:1.5px rgba(243,243,240,.55)}
+@media (max-width:760px){
+  .card{height:auto;min-height:min(74svh,640px);grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(140px,1fr)}
+  .card-foot{margin-top:24px}
+}
   .project-body{align-self:end;justify-self:end;width:100%}
 }
 </style>
@@ -85,27 +97,45 @@ h1{font-family:'Archivo',system-ui,sans-serif;font-weight:800;font-stretch:118%;
   <header class="projects-head">
     <h2 class="display" id="projects-title">Projects <span aria-hidden="true">//</span></h2>
   </header>
-  <article class="project" id="astro" aria-labelledby="astro-title">
-    <div class="project-head">
-      <p class="project-index">01 / 01</p>
-      <h3 class="display" id="astro-title">ASTRO Systems</h3>
-      <p class="project-role">Co-Founder &amp; Systems Engineer</p>
-    </div>
-    <div class="project-body">
-      <p class="project-lede">DARPA Heavy Lift Challenge entry.</p>
-      <ul class="project-points">
-        <li>360° airfoil VTOL drone, gimbaled propulsion</li>
-        <li>Custom flight computer + PCB design</li>
-        <li>CFD analysis, 3D printed prototypes</li>
-        <li>BOM management + vendor sourcing</li>
-      </ul>
-      <a class="project-link" href="https://astrosystems.us">astrosystems.us ↗</a>
-    </div>
-  </article>
+  <div class="deck">
+    <article class="card" id="astro" style="--i:0" aria-labelledby="astro-title">
+      <div class="card-text">
+        <p class="card-tab" aria-hidden="true"><span>01</span><span>ASTRO Systems</span></p>
+        <h3 class="display" id="astro-title">ASTRO Systems</h3>
+        <div class="card-foot">
+          <p class="card-role">Co-Founder &amp; Systems Engineer</p>
+          <p class="card-lede">DARPA Heavy Lift Challenge entry.</p>
+          <ul class="card-points">
+            <li>360° airfoil VTOL drone, gimbaled propulsion</li>
+            <li>Custom flight computer + PCB design</li>
+            <li>CFD analysis, 3D printed prototypes</li>
+            <li>BOM management + vendor sourcing</li>
+          </ul>
+          <a class="pill" href="https://astrosystems.us">astrosystems.us <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+      <div class="card-media" aria-hidden="true"><span>01</span></div>
+    </article>
+    <article class="card" id="project-2" style="--i:1" aria-labelledby="project-2-title">
+      <div class="card-text">
+        <p class="card-tab" aria-hidden="true"><span>02</span><span>Project 2</span></p>
+        <h3 class="display" id="project-2-title">Project 2</h3>
+      </div>
+      <div class="card-media" aria-hidden="true"><span>02</span></div>
+    </article>
+    <article class="card" id="project-3" style="--i:2" aria-labelledby="project-3-title">
+      <div class="card-text">
+        <p class="card-tab" aria-hidden="true"><span>03</span><span>Project 3</span></p>
+        <h3 class="display" id="project-3-title">Project 3</h3>
+      </div>
+      <div class="card-media" aria-hidden="true"><span>03</span></div>
+    </article>
+  </div>
   <footer class="credit"><a href="https://sketchfab.com/3d-models/lockheed-martin-f-35b-lightning-ii-5d54a6af45974ad386ae74d42b33374a">F-35B model</a> by AF267, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></footer>
 </section>
-<script src="assets/js/jet-ascii.js"></script>
-<script src="assets/js/jet-dots.js"></script>
+<!-- Bump ?v= whenever a script changes, so a new page never runs against a cached old script. -->
+<script src="assets/js/jet-ascii.js?v=8"></script>
+<script src="assets/js/jet-dots.js?v=8"></script>
 <script>
 var ascii = {
   base: 'assets/jets/',
@@ -142,6 +172,9 @@ var ascii = {
 // The ASCII canvas is fixed behind the whole page, so its dot grid is the backdrop for both
 // sections. Scrolling down sends the jets off screen; scrolling back to the top brings them back.
 var hero = JetAscii.start(document.getElementById('jets'), ascii);
+
+// Project panels are opaque (they cover the dimmed F-35), so give them the same dot matrix.
+if (JetAscii.backdrop) [].forEach.call(document.querySelectorAll('.panel'), function (panel) { JetAscii.backdrop(panel, ascii); });
 if (hero) {
   var flyOff = function () { hero.exit(scrollY / (innerHeight * 0.6)); };
   addEventListener('scroll', flyOff, { passive: true });
@@ -184,6 +217,31 @@ var dots = JetDots.start(document.getElementById('dots'), document.getElementByI
   addEventListener('scroll', slide, { passive: true });
   addEventListener('resize', slide);
   slide();
+})();
+
+// Project deck: as each card lands on the stack, the cards under it shrink a little and darken.
+(function () {
+  var cards = [].slice.call(document.querySelectorAll('.card'));
+  var still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var stick = [];
+  var measure = function () { stick = cards.map(function (c) { return parseFloat(getComputedStyle(c).top) || 0; }); };
+  var stack = function () {
+    var vh = innerHeight;
+    // How far each card has travelled from the bottom of the screen to its resting spot (0..1).
+    var landed = cards.map(function (c, i) {
+      return Math.min(1, Math.max(0, (vh - c.getBoundingClientRect().top) / Math.max(1, vh - stick[i])));
+    });
+    cards.forEach(function (c, i) {
+      var depth = 0;
+      for (var j = i + 1; j < cards.length; j++) depth += landed[j];
+      c.style.transform = still || !depth ? '' : 'scale(' + (1 - 0.035 * depth).toFixed(4) + ')';
+      c.style.setProperty('--depth', (0.14 * Math.min(depth, 2)).toFixed(3));
+    });
+  };
+  measure();
+  addEventListener('scroll', stack, { passive: true });
+  addEventListener('resize', function () { measure(); stack(); });
+  stack();
 })();
 </script>
 </body>
