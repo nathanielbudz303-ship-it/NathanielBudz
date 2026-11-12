@@ -1,26 +1,29 @@
-# Nathaniel Budz — MFD Portfolio
+# NathanielBudz.com
 
-Personal portfolio website styled as a tactical Multi-Function Display (MFD) with B-scope radar background.
+Personal website, served from `main` by GitHub Pages at [nathanielbudz.com](https://nathanielbudz.com).
 
-## Features
-
-- Interactive B-scope radar sweep with adjustable scan modes
-- utton toggles that type-animate resume content
-- Resume PDF download via the RESUME button
-- Fully static with no backend, no dependencies, only HTML
+It's a "coming soon" page for now. A YF-23 and an F-35B fly behind the title, rendered as black and white ASCII with WebGL from baked point clouds.
 
 ## Files
 
 ```
-index.html    — Full site (single file, self-contained)
-resume.pdf    — Downloadable resume
-README.md     — This file
+index.html               Page markup, styles, and jet settings
+assets/js/jet-ascii.js   ASCII jet renderer and flight model
+assets/jets/             Point clouds (.bin) and manifest (jets.json)
+tools/                   Python scripts that rebuild the point clouds
+CNAME                    Custom domain for GitHub Pages
 ```
 
-## Radar Scan Modes
+## Running locally
 
-- **RWS** — 140° Range While Search (default)
-- **TWS** — 60° Track While Scan
-- **ACM** — 20° Air Combat Mode
-- **VS** — 40° Velocity Search
-- **SAM** — 10° Single Acquisition Mode
+The page fetches its jet data, so it needs a local server rather than opening `index.html` directly:
+
+```
+python -m http.server
+```
+
+Then open http://localhost:8000.
+
+## Credits
+
+F-35B model by [AF267](https://sketchfab.com/3d-models/lockheed-martin-f-35b-lightning-ii-5d54a6af45974ad386ae74d42b33374a) on Sketchfab, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
