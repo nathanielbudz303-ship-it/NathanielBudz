@@ -4,11 +4,14 @@ Personal website, served from `main` by GitHub Pages at [nathanielbudz.com](http
 
 It's a "coming soon" page for now. A YF-23 and an F-35B fly behind the title, rendered as black and white ASCII with WebGL from baked point clouds.
 
+Scrolling down sends the ASCII jets flying off screen while the F-35B assembles out of a cloud of ink dots on the same dotted backdrop. The section then pins and the camera orbits the jet as you keep scrolling. Drag with the left mouse button to rotate it; double-click to reset.
+
 ## Files
 
 ```
 index.html               Page markup, styles, and jet settings
 assets/js/jet-ascii.js   ASCII jet renderer and flight model
+assets/js/jet-dots.js    Scroll-driven dot render of the F-35B
 assets/jets/             Point clouds (.bin) and manifest (jets.json)
 tools/                   Python scripts that rebuild the point clouds
 CNAME                    Custom domain for GitHub Pages

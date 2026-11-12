@@ -243,6 +243,8 @@
     var pointer = { x: -1e4, y: -1e4 };
     var flyers = [];
     var time = 0, last = 0, raf = 0, paused = false, dead = false, cooldown = 0, nextBreak = 1, uid = 0;
+    // Fly-off: 0 = normal, 1 = every jet pushed off screen. Driven from outside (e.g. by scroll).
+    var exitT = 0, exitPlanned = false, idleDrawn = false;
     var seed = (Date.now() & 0xffff) + 1;
     var rand = function () { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
 
@@ -651,12 +653,12 @@
       var F = lanes ? flowFrame() : null;
       cooldown -= dt;
       var free = flyers.filter(function (f) { return !f.leader && !f.scripted; }).length;
-      if (free < o.count && cooldown <= 0) {
+      if (exitT === 0 && free < o.count && cooldown <= 0) {
         if (lanes) spawnLane(false);
         else spawn(false);
         cooldown = 1.2 + rand() * 2.5;
       }
-      if (o.breaks && time >= nextBreak) {
+      if (exitT === 0 && o.breaks && time >= nextBreak) {
         if (lanes && spawnBreakLane() === false) nextBreak = time + 2;
         else {
           if (!lanes) spawnBreak();
@@ -766,8 +768,46 @@
       }
     }
 
+    // When a fly-off starts, give each jet a path off screen: visible jets boost straight
+    // ahead to the nearest edge, jets already outside move further out. Wingmen share their
+    // leader's path so formations stay together.
+    function planExit() {
+      var W = view.w, H = view.h, cx = W / 2, cy = H / 2;
+      flyers.forEach(function (f) {
+        var m = f.S * 1.2;
+        var inside = f.x > -m && f.x < W + m && f.y > -m && f.y < H + m;
+        var dx, dy;
+        if (inside) {
+          dx = Math.cos(f.heading);
+          dy = Math.sin(f.heading);
+          var tx = dx > 1e-6 ? (W + m - f.x) / dx : dx < -1e-6 ? (-m - f.x) / dx : Infinity;
+          var ty = dy > 1e-6 ? (H + m - f.y) / dy : dy < -1e-6 ? (-m - f.y) / dy : Infinity;
+          f.exitD = Math.min(tx, ty) + m;
+        } else {
+          var r = Math.hypot(f.x - cx, f.y - cy) || 1;
+          dx = (f.x - cx) / r;
+          dy = (f.y - cy) / r;
+          f.exitD = Math.hypot(W, H) * 0.5;
+        }
+        f.exitX = dx;
+        f.exitY = dy;
+      });
+      flyers.forEach(function (f) {
+        var L = f.leader;
+        if (!L || L.exitD === undefined) return;
+        var d = Math.max(f.exitD, L.exitD);
+        f.exitD = L.exitD = d;
+        f.exitX = L.exitX;
+        f.exitY = L.exitY;
+      });
+      exitPlanned = true;
+    }
+
     function render() {
       resize();
+      if (exitT > 0 && !exitPlanned) planExit();
+      if (exitT === 0) exitPlanned = false;
+      var boost = exitT * exitT;
       var th = THEMES[o.theme] || THEMES.light;
       var ink = hex(th.ink);
       var pick = function (c) { return o.color ? hex(c) : ink; };
@@ -794,7 +834,8 @@
         var cells = (f.S * f.S) / cellArea;
         var n = Math.max(1200, Math.min(f.type.count, Math.round(cells * 26)));
         gl.uniformMatrix3fv(jetProg.u.uM, false, [f.m[0][0], f.m[1][0], 0, f.m[0][1], f.m[1][1], 0, f.m[0][2], f.m[1][2], 0]);
-        gl.uniform2f(jetProg.u.uPos, f.x, f.y);
+        var off = exitPlanned && f.exitD !== undefined ? f.exitD * boost : 0;
+        gl.uniform2f(jetProg.u.uPos, f.x + (off ? f.exitX * off : 0), f.y + (off ? f.exitY * off : 0));
         gl.uniform1f(jetProg.u.uW, (cells / n) * weightScale);
         gl.uniform3fv(jetProg.u.uBody, pick(th.bodies[f.id] || th.ink));
         gl.bindVertexArray(f.type.vao);
@@ -861,11 +902,16 @@
     function frame(now) {
       var dt = Math.min((now - last) / 1000, 0.05);
       last = now;
-      if (!paused) {
+      // Once every jet has flown off, only the dot grid is left: draw it once and idle
+      // (redrawing only if the canvas size changes) until the jets are called back.
+      var idle = exitT >= 1;
+      var sized = canvas.clientWidth === view.w && canvas.clientHeight === view.h && Math.min(window.devicePixelRatio || 1, o.maxDpr) === view.dpr;
+      if (!paused && !idle) {
         time += dt;
         step(dt);
       }
-      render();
+      if (!idle || !idleDrawn || !sized) render();
+      idleDrawn = idle;
       if (!dead) raf = requestAnimationFrame(frame);
     }
 
@@ -924,6 +970,8 @@
         }
       },
       pause: function (v) { paused = v; },
+      // 0..1: how far the jets have flown off screen. Scrubbable both ways; no new jets spawn while above 0.
+      exit: function (t) { exitT = Math.max(0, Math.min(1, t)); },
       advance: function (seconds) {
         for (var i = 0; i < Math.round(seconds * 60); i++) {
           time += 1 / 60;
