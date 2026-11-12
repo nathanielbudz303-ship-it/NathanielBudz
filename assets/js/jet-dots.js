@@ -20,6 +20,8 @@
     'uniform float uSize;',
     'uniform float uGain;',
     'uniform float uThin;',
+    'uniform float uShift;',
+    'uniform float uPresence;',
     'uniform vec3 uC0;',
     'uniform vec3 uC1;',
     'uniform vec3 uC2;',
@@ -41,6 +43,8 @@
     '  p += uMotion * 0.005 * vec3(sin(uTime * 0.9 + seed * 31.0), sin(uTime * 1.1 + seed * 17.0), sin(uTime * 0.7 + seed * 23.0));',
     '  vec4 clip = uViewProj * vec4(p, 1.0);',
     '  vec2 ndc = clip.xy / clip.w;',
+    // Formed dots ride with the section as it scrolls into place; loose dust stays put on screen.
+    '  ndc.y += uShift * e;',
     '  vec2 px = vec2((ndc.x * 0.5 + 0.5) * uRes.x, (0.5 - ndc.y * 0.5) * uRes.y);',
     '  vec2 d = px - uPointer;',
     '  float dist = length(d);',
@@ -49,14 +53,14 @@
     '  ndc = vec2(px.x / uRes.x * 2.0 - 1.0, 1.0 - px.y / uRes.y * 2.0);',
     '  gl_Position = vec4(ndc * clip.w, clip.z, clip.w);',
     '  float persp = uDist / clip.w;',
-    '  gl_PointSize = clamp(uSize * persp * (edge ? 1.15 : 1.0) * mix(1.5, 1.0, e), 1.0, 9.0);',
+    '  gl_PointSize = clamp(uSize * min(persp, 1.35) * (edge ? 1.15 : 1.0) * mix(0.85, 1.0, e), 1.0, 6.0);',
     '  if (!edge && dust < 0.5 && fract(seed * 13.7) < uThin) { gl_Position = vec4(2.0, 2.0, 2.0, 1.0); gl_PointSize = 0.0; vAlpha = 0.0; vColor = vec3(0.0); return; }',
     '  float g = clamp(dot(ndc, vec2(0.62, -0.78)) * 0.6 + 0.5 + (fract(seed * 7.13) - 0.5) * 1.1, 0.0, 1.0);',
     '  vec3 col = g < 0.5 ? mix(uC0, uC1, g * 2.0) : mix(uC1, uC2, g * 2.0 - 1.0);',
     '  float twinkle = 1.0 - uMotion * 0.45 * (0.5 + 0.5 * sin(uTime * (1.1 + seed * 2.6) + seed * 60.0));',
     '  float body = dust > 0.5 ? 0.35 : edge ? 0.9 : (0.14 + 0.36 * shade) * (abs(aInfo.y - 1.0) < 0.5 ? 0.45 : 1.0);',
     '  float fog = clamp(1.0 - (clip.w - uDist) * 0.38, 0.4, 1.0);',
-    '  vAlpha = uGain * body * twinkle * fog * mix(0.3, 1.0, e) * (1.0 + f * 0.8);',
+    '  vAlpha = uPresence * uGain * body * twinkle * fog * mix(0.3, 1.0, e) * (1.0 + f * 0.8);',
     '  vColor = mix(col, uHi, f * 0.3);',
     '}',
   ].join('\n');
@@ -85,6 +89,9 @@
     size: 2.0,
     gain: 0.9,
     thin: 0.45,
+    // The canvas is meant to be a fixed, full-screen layer. `stage` is the section's pinned
+    // element: the formed jet is centered on it, and it receives the drag input.
+    stage: null,
     // Left-click drag rotates the jet (mouse and pen only, so touch still scrolls).
     // Double-click eases it back to the scroll path's view.
     drag: true,
@@ -184,6 +191,7 @@
     var gl = canvas.getContext('webgl2', { antialias: false, alpha: true, premultipliedAlpha: true });
     if (!gl) return null;
     var prog = program(gl);
+    var stage = o.stage || canvas;
     var vao = null, count = 0;
     var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     var view = { w: 0, h: 0, dpr: 1 };
@@ -282,7 +290,17 @@
       var eye = [d * Math.cos(el) * Math.cos(az), d * Math.sin(el), d * Math.cos(el) * Math.sin(az)];
       var vp = multiply(perspective(fov, aspect, 0.1, 50), lookAt(eye, [0, 1, 0]));
 
+      // Where the section's pinned stage sits on screen: the formed jet is centered on it, so it
+      // rises into place with the page. Loose dust fades in over the first part of the approach.
+      var r = section.getBoundingClientRect();
+      var stageH = stage === canvas ? view.h : stage.clientHeight;
+      var stageTop = r.top > 0 ? r.top : Math.min(0, r.bottom - stageH);
+      var shift = -2 * (stageTop + stageH / 2 - view.h / 2) / view.h;
+      var presence = smooth(clamp((view.h - r.top) / (view.h * 0.6), 0, 1));
+
       gl.useProgram(prog.p);
+      gl.uniform1f(prog.u.uShift, shift);
+      gl.uniform1f(prog.u.uPresence, presence);
       gl.uniformMatrix4fv(prog.u.uViewProj, false, vp);
       gl.uniform1f(prog.u.uAssemble, state.assemble);
       gl.uniform1f(prog.u.uTime, time);
@@ -368,6 +386,7 @@
 
     function onDown(e) {
       if (e.button !== 0 || e.pointerType === 'touch' || spin.id !== null) return;
+      if (e.target.closest && e.target.closest('a')) return;
       e.preventDefault();
       spin.id = e.pointerId;
       spin.x = e.clientX;
@@ -375,8 +394,8 @@
       spin.t = performance.now();
       spin.vaz = spin.vel = 0;
       spin.reset = false;
-      try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
-      canvas.classList.add('dragging');
+      try { stage.setPointerCapture(e.pointerId); } catch (err) {}
+      stage.classList.add('dragging');
     }
 
     function onDrag(e) {
@@ -399,8 +418,8 @@
       // Only carry momentum if the pointer was still moving when released.
       if (performance.now() - spin.t > 80) spin.vaz = spin.vel = 0;
       spin.id = null;
-      try { canvas.releasePointerCapture(e.pointerId); } catch (err) {}
-      canvas.classList.remove('dragging');
+      try { stage.releasePointerCapture(e.pointerId); } catch (err) {}
+      stage.classList.remove('dragging');
     }
 
     function onReset() {
@@ -411,6 +430,12 @@
 
     var observer = new IntersectionObserver(function (entries) {
       visible = entries[entries.length - 1].isIntersecting;
+      if (!visible) {
+        // The canvas is a fixed layer over the whole page, so wipe it when the section leaves.
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.clearColor(0, 0, 0, 0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+      }
       wake();
     });
 
@@ -427,13 +452,13 @@
         document.addEventListener('pointerleave', onLeave);
       }
       if (o.drag) {
-        canvas.classList.add('draggable');
-        canvas.addEventListener('pointerdown', onDown);
-        canvas.addEventListener('pointermove', onDrag);
-        canvas.addEventListener('pointerup', onUp);
-        canvas.addEventListener('pointercancel', onUp);
-        canvas.addEventListener('lostpointercapture', onUp);
-        canvas.addEventListener('dblclick', onReset);
+        stage.classList.add('draggable');
+        stage.addEventListener('pointerdown', onDown);
+        stage.addEventListener('pointermove', onDrag);
+        stage.addEventListener('pointerup', onUp);
+        stage.addEventListener('pointercancel', onUp);
+        stage.addEventListener('lostpointercapture', onUp);
+        stage.addEventListener('dblclick', onReset);
       }
       document.addEventListener('visibilitychange', wake);
     });
@@ -449,13 +474,13 @@
         observer.disconnect();
         removeEventListener('pointermove', onPointer);
         document.removeEventListener('pointerleave', onLeave);
-        canvas.removeEventListener('pointerdown', onDown);
-        canvas.removeEventListener('pointermove', onDrag);
-        canvas.removeEventListener('pointerup', onUp);
-        canvas.removeEventListener('pointercancel', onUp);
-        canvas.removeEventListener('lostpointercapture', onUp);
-        canvas.removeEventListener('dblclick', onReset);
-        canvas.classList.remove('draggable', 'dragging');
+        stage.removeEventListener('pointerdown', onDown);
+        stage.removeEventListener('pointermove', onDrag);
+        stage.removeEventListener('pointerup', onUp);
+        stage.removeEventListener('pointercancel', onUp);
+        stage.removeEventListener('lostpointercapture', onUp);
+        stage.removeEventListener('dblclick', onReset);
+        stage.classList.remove('draggable', 'dragging');
         document.removeEventListener('visibilitychange', wake);
       },
     };

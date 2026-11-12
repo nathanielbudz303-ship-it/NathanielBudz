@@ -22,17 +22,17 @@ main{position:relative;height:100%;display:flex;align-items:center;justify-conte
 .mark::before{content:"";position:absolute;inset:-14px -22px;z-index:-1;pointer-events:none;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);background:radial-gradient(closest-side,rgba(243,243,240,.72),rgba(243,243,240,0));-webkit-mask-image:radial-gradient(closest-side,#000 55%,transparent);mask-image:radial-gradient(closest-side,#000 55%,transparent)}
 h1{font-family:'Archivo',system-ui,sans-serif;font-weight:800;font-stretch:118%;font-size:min(33px,7.2vw);line-height:1;letter-spacing:-.025em}
 .soon{font-size:13px;font-weight:500;letter-spacing:.32em;text-transform:uppercase;color:var(--dim);padding-left:.32em}
-.credit{position:absolute;left:16px;bottom:12px;font-size:11px;color:var(--dim)}
-.credit a,.label a{color:inherit}
+.credit{position:relative;padding:24px 16px 12px;font-size:11px;color:var(--dim)}
+.credit a{color:inherit}
 .cue{position:absolute;left:50%;bottom:40px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:10px;font-size:10px;letter-spacing:.32em;padding-left:.32em;text-transform:uppercase;color:var(--dim);text-decoration:none}
 .cue::after{content:"";width:1px;height:28px;background:linear-gradient(var(--dim),transparent);transform-origin:top;animation:cue 2.4s ease-in-out infinite}
 @keyframes cue{0%{transform:scaleY(0);opacity:1}55%{transform:scaleY(1);opacity:1}100%{transform:scaleY(1);opacity:0}}
 @media (prefers-reduced-motion:reduce){.cue::after{animation:none}}
 .dots{position:relative;height:340vh}
 .stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
-#dots{position:absolute;inset:0;width:100%;height:100%;display:block}
-#dots.draggable{cursor:grab;-webkit-user-select:none;user-select:none}
-#dots.dragging{cursor:grabbing}
+#dots{position:fixed;inset:0;width:100%;height:100%;display:block;pointer-events:none}
+.stage.draggable{cursor:grab;-webkit-user-select:none;user-select:none}
+.stage.dragging{cursor:grabbing}
 .label{position:absolute;left:16px;bottom:12px;display:flex;flex-direction:column;gap:6px;font-size:11px;color:var(--dim)}
 .label strong{font-weight:500;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink)}
 </style>
@@ -40,6 +40,7 @@ h1{font-family:'Archivo',system-ui,sans-serif;font-weight:800;font-stretch:118%;
 <body>
 <section class="hero">
   <canvas id="jets" aria-hidden="true"></canvas>
+  <canvas id="dots" aria-hidden="true"></canvas>
   <main>
     <div class="mark">
       <h1>NathanielBudz.com</h1>
@@ -47,14 +48,13 @@ h1{font-family:'Archivo',system-ui,sans-serif;font-weight:800;font-stretch:118%;
     </div>
   </main>
   <a class="cue" href="#f35">Scroll</a>
-  <p class="credit"><a href="https://sketchfab.com/3d-models/lockheed-martin-f-35b-lightning-ii-5d54a6af45974ad386ae74d42b33374a">F-35B</a> by AF267, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></p>
 </section>
 <section class="dots" id="f35" aria-label="F-35B Lightning II">
   <div class="stage">
-    <canvas id="dots" aria-hidden="true"></canvas>
-    <p class="label"><strong>F-35B Lightning II</strong><span>Model by <a href="https://sketchfab.com/3d-models/lockheed-martin-f-35b-lightning-ii-5d54a6af45974ad386ae74d42b33374a">AF267</a>, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></span></p>
+    <p class="label"><strong>F-35B Lightning II</strong></p>
   </div>
 </section>
+<footer class="credit"><a href="https://sketchfab.com/3d-models/lockheed-martin-f-35b-lightning-ii-5d54a6af45974ad386ae74d42b33374a">F-35B model</a> by AF267, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></footer>
 <script src="assets/js/jet-ascii.js"></script>
 <script src="assets/js/jet-dots.js"></script>
 <script>
@@ -104,6 +104,7 @@ var dots = JetDots.start(document.getElementById('dots'), document.getElementByI
   jet: 'f35',
   theme: 'light',
   hover: false,
+  stage: document.querySelector('.stage'),
 });
 </script>
 </body>
