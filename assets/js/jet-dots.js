@@ -102,6 +102,8 @@
     push: 22,
     fov: 30,
     maxDpr: 2,
+    // Share of the pinned scroll the camera path uses; the rest holds the final view.
+    orbitEnd: 1,
     // Camera path while pinned: azimuth (deg, 90 = right side), elevation (deg), distance multiplier.
     path: [
       { at: 0, az: 150, el: 48, zoom: 1.0 },
@@ -195,7 +197,9 @@
     var vao = null, count = 0;
     var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     var view = { w: 0, h: 0, dpr: 1 };
-    var state = { assemble: reduced ? 1 : 0, orbit: reduced ? 0.5 : 0, px: -1e4, py: -1e4 };
+    var state = { assemble: reduced ? 1 : 0, orbit: reduced ? 0.5 : 0, px: -1e4, py: -1e4, scatter: 0 };
+    // Set from outside (0..1) to blow the formed jet back apart into dust, e.g. on the way out.
+    var scatterTarget = 0;
     var pointer = { x: -1e4, y: -1e4 };
     // User rotation (degrees) layered on top of the scroll path, with release momentum.
     var spin = { az: 0, el: 0, vaz: 0, vel: 0, id: null, x: 0, y: 0, t: 0, reset: false };
@@ -266,7 +270,7 @@
       var vh = window.innerHeight;
       return {
         assemble: clamp(1 - (r.top + 0.1 * vh) / (0.95 * vh), 0, 1),
-        orbit: clamp(-r.top / Math.max(1, r.height - vh), 0, 1),
+        orbit: clamp(-r.top / Math.max(1, (r.height - vh) * o.orbitEnd), 0, 1),
       };
     }
 
@@ -301,9 +305,10 @@
 
       gl.useProgram(prog.p);
       gl.uniform1f(prog.u.uShift, shift);
-      gl.uniform1f(prog.u.uPresence, presence);
+      gl.uniform1f(prog.u.uPresence, presence * (reduced ? 1 - state.scatter : 1));
       gl.uniformMatrix4fv(prog.u.uViewProj, false, vp);
-      gl.uniform1f(prog.u.uAssemble, state.assemble);
+      // With reduced motion the jet fades out instead of scattering.
+      gl.uniform1f(prog.u.uAssemble, reduced ? state.assemble : state.assemble * (1 - state.scatter));
       gl.uniform1f(prog.u.uTime, time);
       gl.uniform1f(prog.u.uMotion, reduced ? 0 : 1);
       gl.uniform1f(prog.u.uDist, d);
@@ -339,6 +344,7 @@
       var k = 1 - Math.exp(-dt * 5);
       if (!reduced) {
         state.assemble += (t.assemble - state.assemble) * k;
+        state.scatter += (scatterTarget - state.scatter) * (1 - Math.exp(-dt * 8));
         state.orbit += (t.orbit - state.orbit) * k;
       }
       var kp = 1 - Math.exp(-dt * 10);
@@ -466,6 +472,10 @@
 
     return {
       ready: done,
+      scatter: function (t) {
+        scatterTarget = clamp(t, 0, 1);
+        if (reduced) state.scatter = scatterTarget;
+      },
       advance: function (seconds) {
         for (var i = 0; i < Math.round(seconds * 60); i++) update(1 / 60);
         render();

@@ -6,7 +6,7 @@ It's a work in progress. A YF-23 and an F-35B fly behind the title, rendered as 
 
 Scrolling down sends the ASCII jets flying off screen while the F-35B assembles out of a cloud of ink dots on the same dotted backdrop. The section then pins and the camera orbits the jet as you keep scrolling. Drag with the left mouse button to rotate it; double-click to reset.
 
-After the orbit, the Projects panel slides up over the F-35 section, which falls back at half speed and dims. It opens with a dark PROJECTS // header strip, then a deck of project cards: each card sticks near the top and the next one stacks onto it a tab's height lower, so earlier cards stay visible as tabs while they shrink and darken. Add a project by adding an `<article class="card">` to the `.deck` in `index.html` with the next `--i` value (0, 1, 2...). All cards share one height, sized to the card with the most text; on screens too short to show that in the stack (e.g. iPhone SE), the deck becomes a plain list. Card photos live in `assets/img/`.
+After the orbit, the F-35 holds its final view, then scatters back into dust as the Projects panel arrives with a pixelated leading edge that fills in block by block. The panel opens with a dark PROJECTS // header strip, then a deck of project cards: each card sticks near the top and the next one stacks onto it a tab's height lower, so earlier cards stay visible as tabs while they shrink and darken. Add a project by adding an `<article class="card">` to the `.deck` in `index.html` with the next `--i` value (0, 1, 2...). All cards share one height, sized to the card with the most text; on screens too short to show that in the stack (e.g. iPhone SE), the deck becomes a plain list. Card photos live in `assets/img/`.
 
 ## Files
 
