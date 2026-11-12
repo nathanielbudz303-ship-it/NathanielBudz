@@ -216,7 +216,7 @@ var dots = JetDots.start(document.getElementById('dots'), document.getElementByI
   // a few rows of square blocks at the leading edge fill in at random; everything below is solid.
   // Runs of blocks are merged and overlap by 1px so no seams show.
   var dissolvePath = function (p, W, H) {
-    var cols = Math.max(6, Math.min(24, Math.round(W / 60))), cell = W / cols, rows = 4, band = Math.floor(rows * cell), d = '';
+    var cols = Math.max(8, Math.min(36, Math.round(W / 44))), cell = W / cols, rows = 6, band = Math.floor(rows * cell), d = '';
     for (var r = 0; r < rows; r++) {
       var run = -1;
       for (var c = 0; c <= cols; c++) {
