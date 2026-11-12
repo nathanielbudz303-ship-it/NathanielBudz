@@ -123,6 +123,8 @@
     size: [0.12, 0.21],
     speed: 1,
     turnRate: 0.42,
+    // Extra bank and roll speed while dodging the cursor (lanes pattern). 0 = same as cruising.
+    agility: 0,
     bank: 1.0,
     formation: 0.3,
     breaks: true,
@@ -599,7 +601,7 @@
 
     function steerLane(f, dt, F) {
       var n = laneOf(F, f.x, f.y);
-      var desired;
+      var desired, evade = 0;
       if (f.mode === 'hold') {
         desired = F.th + clamp((f.lane - n) / (f.S * 3), -0.4, 0.4);
         if (alongOf(F, f.x, f.y) >= f.breakU) {
@@ -618,17 +620,21 @@
         if (o.avoid) {
           var dx = pointer.x - f.x, dy = pointer.y - f.y;
           var hx = Math.cos(f.heading), hy = Math.sin(f.heading);
-          if (Math.abs(f.dodge) < f.S && Math.hypot(dx, dy) < Math.max(f.S * 3, 110) && dx * hx + dy * hy > 0) {
+          if (Math.abs(f.dodge) < f.S && Math.hypot(dx, dy) < Math.max(f.S * 3, 110) * (1 + 0.2 * o.agility) && dx * hx + dy * hy > 0) {
             f.dodge = -Math.sign(hx * dy - hy * dx || 1) * f.S * 3;
           }
         }
         f.dodge *= Math.exp(-dt / 2.5);
-        desired = F.th + o.meander * Math.sin(time * f.mf + f.ph) + clamp((f.lane + f.dodge - n) / (f.S * 3), -0.45, 0.45);
+        // How hard this jet is evading the cursor right now: 1 just after a dodge, fading to 0.
+        evade = o.agility * clamp(Math.abs(f.dodge) / (f.S * 3), 0, 1);
+        var reach = 0.45 * (1 + 0.3 * evade);
+        desired = F.th + o.meander * Math.sin(time * f.mf + f.ph) + clamp((f.lane + f.dodge - n) / (f.S * 3), -reach, reach);
       }
-      var cap = f.mode === 'out' ? Math.max(o.bank, 1.15) : o.bank;
-      var bank = clamp(wrap(desired - f.heading) * 2.2, -cap, cap);
-      var limit = 1.7 * dt;
-      f.roll += clamp((bank - f.roll) * Math.min(1, dt * 6), -limit, limit);
+      // While evading, jets bank harder and roll in faster.
+      var cap = f.mode === 'out' ? Math.max(o.bank, 1.15) : o.bank * (1 + 0.2 * evade);
+      var bank = clamp(wrap(desired - f.heading) * 2.2 * (1 + 0.25 * evade), -cap, cap);
+      var limit = 1.7 * (1 + 0.55 * evade) * dt;
+      f.roll += clamp((bank - f.roll) * Math.min(1, dt * 6 * (1 + 0.5 * evade)), -limit, limit);
       f.heading += o.turnRate * Math.tan(f.roll) * dt;
       f.pitch = 0.05 * Math.sin(time * 0.6 + f.ph);
       f.x += Math.cos(f.heading) * f.speed * o.speed * dt;
