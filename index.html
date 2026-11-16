@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,800&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#f3f3f0;--ink:#12161d;--dim:#4a5260}
+:root{--bg:#f3f3f0;--ink:#12161d;--dim:#4a5260;--handoff:100vh}
 html,body{background:var(--bg);color:var(--ink)}
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
 body{font-family:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;overflow-x:hidden}
@@ -28,7 +28,8 @@ h1{font-family:'Archivo',system-ui,sans-serif;font-weight:800;font-stretch:118%;
 .cue::after{content:"";width:1px;height:28px;background:linear-gradient(var(--dim),transparent);transform-origin:top;animation:cue 2.4s ease-in-out infinite}
 @keyframes cue{0%{transform:scaleY(0);opacity:1}55%{transform:scaleY(1);opacity:1}100%{transform:scaleY(1);opacity:0}}
 @media (prefers-reduced-motion:reduce){.cue::after{animation:none}}
-.dots{position:relative;height:340vh}
+/* The F-35 pin runs --handoff longer so the stage stays put through the Projects handoff. */
+.dots{position:relative;height:calc(340vh + var(--handoff))}
 .stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
 #dots{position:fixed;inset:0;width:100%;height:100%;display:block;pointer-events:none}
 .stage.draggable{cursor:grab;-webkit-user-select:none;user-select:none}
@@ -36,13 +37,24 @@ h1{font-family:'Archivo',system-ui,sans-serif;font-weight:800;font-stretch:118%;
 .label{position:absolute;left:16px;bottom:12px;display:flex;flex-direction:column;gap:6px;font-size:11px;color:var(--dim)}
 .label strong{font-weight:500;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink)}
 /* Panel stack: each panel slides up over the one before it, which falls back at half speed and
-   darkens (via its own ::after, driven by --shade). The first panel instead arrives over the F-35
-   with a pixel dissolve along its leading edge (clip-path set from script), so it has a square,
+   darkens (via its own ::after, driven by --shade). The first panel instead pins over the F-35 and
+   is uncovered by its sliding PROJECTS bar (clip-path set from script), so it has a square,
    shadowless edge. */
 .panel{--shade:0;--gutter:clamp(16px,4vw,56px);position:relative;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;background:var(--bg);border-radius:16px 16px 0 0;box-shadow:0 -1px 0 rgba(18,22,29,.08),0 -28px 56px -28px rgba(18,22,29,.4)}
 .panel::after{content:"";position:absolute;inset:0;border-radius:inherit;background:var(--ink);opacity:var(--shade);pointer-events:none}
 .display{font-family:'Archivo',system-ui,sans-serif;font-weight:800;font-stretch:118%;line-height:.88;letter-spacing:-.04em;text-transform:uppercase}
-#projects{border-radius:0;box-shadow:none}
+/* Projects handoff: the wrapper overlaps the end of the F-35 section and is --handoff taller than
+   the panel, so the panel sticks at the top for that much scroll while the stage behind it is still
+   pinned. During that stretch only the PROJECTS bar moves. Reduced motion drops the pin and the
+   panel simply slides up over the F-35. */
+.handoff{position:relative;z-index:1;margin-top:calc(-100vh - var(--handoff));pointer-events:none}
+.handoff::after{content:"";display:block;height:var(--handoff)}
+#projects{position:sticky;top:0;pointer-events:auto;border-radius:0;box-shadow:none}
+@media (prefers-reduced-motion:reduce){
+  .handoff{margin-top:calc(-1 * var(--handoff))}
+  .handoff::after{display:none}
+  #projects{position:relative}
+}
 /* PROJECTS header: a thin inverted strip at the top of the first project's panel, so it reads as
    a section header rather than a page of its own. */
 .projects-head{background:var(--ink);color:var(--bg);border-radius:inherit;padding:clamp(24px,5vh,48px) var(--gutter)}
@@ -101,6 +113,7 @@ h1{font-family:'Archivo',system-ui,sans-serif;font-weight:800;font-stretch:118%;
     <p class="label"><strong>F-35B Lightning II</strong></p>
   </div>
 </section>
+<div class="handoff">
 <section class="panel" id="projects" aria-labelledby="projects-title">
   <header class="projects-head">
     <h2 class="display" id="projects-title">Projects <span aria-hidden="true">//</span></h2>
@@ -141,6 +154,7 @@ h1{font-family:'Archivo',system-ui,sans-serif;font-weight:800;font-stretch:118%;
   </div>
   <footer class="credit"><a href="https://sketchfab.com/3d-models/lockheed-martin-f-35b-lightning-ii-5d54a6af45974ad386ae74d42b33374a">F-35B model</a> by AF267, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></footer>
 </section>
+</div>
 <!-- Bump ?v= whenever a script changes, so a new page never runs against a cached old script. -->
 <script src="assets/js/jet-ascii.js?v=8"></script>
 <script src="assets/js/jet-dots.js?v=9"></script>
@@ -196,50 +210,69 @@ var dots = JetDots.start(document.getElementById('dots'), document.getElementByI
   theme: 'light',
   hover: false,
   stage: document.querySelector('.stage'),
-  // Hold the F-35's final view for the last stretch of the pinned scroll before the handoff.
-  orbitEnd: 0.82,
+  // The orbit ends 196.8vh into the section (82% of the 240vh before the handoff), then the F-35
+  // holds its final view until the Projects pin. orbitEnd is a fraction of the section height
+  // minus one screen (340vh with a 100vh --handoff), so change this if either height changes.
+  orbitEnd: (0.82 * 240) / 340,
 });
 
-// Projects handoff (dot dissolve): the F-35 holds its final view in place and scatters back into
-// dust while the Projects panel arrives with a pixelated leading edge that fills in as you scroll.
+// Projects handoff (dot dissolve): the page holds still (the F-35 stage and the Projects panel are
+// both pinned) while the F-35 scatters back into dust and only the black PROJECTS bar moves,
+// sliding up over it with a pixelated top edge and uncovering the cards in place behind it. Once
+// the bar docks at the top, scrolling carries on into the deck.
 // Later panels slide over the panel before it, which falls back at half speed and darkens.
 (function () {
-  var stage = document.querySelector('.stage');
+  var handoff = document.querySelector('.handoff');
+  var bar = document.querySelector('.projects-head');
   var panels = [].slice.call(document.querySelectorAll('.panel'));
   var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var parallax = reduced ? 0 : 0.5;
   var SHADE = 0.55;
+  var HIDDEN = 'inset(0 0 100% 0)';
   var clamp01 = function (v) { return Math.min(1, Math.max(0, v)); };
   var hash = function (a, b) { var h = Math.sin(a * 127.1 + b * 311.7) * 43758.5453; return h - Math.floor(h); };
   var rect = function (x, y, w, h) { return 'M' + x + ' ' + y + 'h' + w + 'v' + h + 'h' + (-w) + 'z'; };
-  // Outline of the visible part of the first panel at progress p (0 = just entering, 1 = covering):
-  // a few rows of square blocks at the leading edge fill in at random; everything below is solid.
-  // Runs of blocks are merged and overlap by 1px so no seams show.
-  var dissolvePath = function (p, W, H) {
-    var cols = Math.max(8, Math.min(36, Math.round(W / 44))), cell = W / cols, rows = 6, band = Math.floor(rows * cell), d = '';
+  // Outline of the visible part of the pinned first panel while the PROJECTS bar sits y px down
+  // the screen at progress p (0 = just entering, 1 = docked): the top rows of the bar are square
+  // blocks that fill in at random (all of them by p = 1), and everything from just below them down
+  // is solid, so the bar's lower edge is straight and the cards under it show as it passes. Runs of
+  // blocks are merged and overlap by 1px so no seams show.
+  var dissolvePath = function (p, y, W, H, barH) {
+    var cols = Math.max(8, Math.min(36, Math.round(W / 44))), cell = W / cols;
+    var rows = Math.max(1, Math.floor(barH / cell)), front = p * 2 * rows, d = '';
     for (var r = 0; r < rows; r++) {
-      var run = -1;
+      var k = rows - 1 - r, run = -1; // k counts rows up from the bottom of the blocks
       for (var c = 0; c <= cols; c++) {
-        var on = c < cols && (r + 0.5) / rows + (hash(r, c) - 0.5) * 0.9 > (1 - p) * 1.15;
+        var on = c < cols && front > k + hash(r, c) * rows;
         if (on && run < 0) run = c;
-        if (!on && run >= 0) { d += rect(Math.floor(run * cell), Math.floor(r * cell), Math.ceil((c - run) * cell) + 1, Math.ceil(cell) + 1); run = -1; }
+        if (!on && run >= 0) { d += rect(Math.floor(run * cell), y + Math.floor(r * cell), Math.ceil((c - run) * cell) + 1, Math.ceil(cell) + 1); run = -1; }
       }
     }
-    return d + rect(0, band, W, H - band);
+    var solid = y + Math.floor(rows * cell);
+    return d + rect(0, solid, W, Math.max(0, H - solid));
   };
 
   var slide = function () {
     var vh = innerHeight;
     panels.forEach(function (panel, i) {
-      // Layout position (offsetTop ignores the transform this panel gets when the next one arrives).
-      var p = clamp01(1 - (panel.offsetTop - scrollY) / vh);
+      var p;
       if (i === 0) {
-        // Hold the F-35 where it is (cancel the scroll) while it scatters; reduced motion just fades it.
-        var hold = reduced ? 0 : p * stage.clientHeight;
-        stage.style.transform = hold ? 'translateY(' + hold.toFixed(1) + 'px)' : '';
+        // Pinned: progress runs over the extra scroll the wrapper adds. Reduced motion has no pin,
+        // so progress follows the panel sliding up from the bottom of the screen.
+        var top = handoff.getBoundingClientRect().top;
+        var pin = handoff.offsetHeight - panel.offsetHeight;
+        p = reduced || pin < 1 ? clamp01(1 - top / vh) : clamp01(-top / pin);
         if (dots && dots.scatter) dots.scatter(clamp01(p / 0.7));
-        panel.style.clipPath = !reduced && p > 0 && p < 1 ? "path('" + dissolvePath(p, panel.offsetWidth, panel.offsetHeight) + "')" : '';
+        // The bar slides from the bottom of the screen to its resting place at scroll speed; it
+        // sits above the (sticky, later) cards while it does. One rounded offset drives both the
+        // bar and the clip so no seam opens between them.
+        var sliding = !reduced && p > 0 && p < 1, y = sliding ? Math.round((1 - p) * vh) : 0;
+        bar.style.transform = sliding ? 'translateY(' + y + 'px)' : '';
+        bar.style.zIndex = sliding ? '2' : '';
+        panel.style.clipPath = reduced || p >= 1 ? '' : p <= 0 ? HIDDEN : "path('" + dissolvePath(p, y, panel.offsetWidth, panel.offsetHeight, bar.offsetHeight) + "')";
       } else {
+        // Layout position (offsetTop ignores the transform this panel gets when the next one arrives).
+        p = clamp01(1 - (panel.offsetTop - scrollY) / vh);
         panels[i - 1].style.transform = p > 0 && parallax ? 'translateY(' + (p * parallax * vh).toFixed(1) + 'px)' : '';
         panels[i - 1].style.setProperty('--shade', (p * SHADE).toFixed(3));
       }
