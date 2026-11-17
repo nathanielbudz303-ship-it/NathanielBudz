@@ -3,13 +3,13 @@
 // it in every page's menu.
 (function () {
   var PAGES = [
-    { href: '/projects/', label: 'Projects' },
+    { href: '/#projects', label: 'Projects' }, // the Projects section of the home page
     { href: '/resume/', label: 'Resume' },
     { href: '/contact/', label: 'Contact' },
   ];
   var HOME = { href: '/', label: 'NathanielBudz.com' };
 
-  // This page's path in the same form as the hrefs above ("/projects/index.html" -> "/projects/").
+  // This page's path in the same form as the hrefs above ("/resume/index.html" -> "/resume/").
   var here = location.pathname.replace(/index\.html$/, '');
   if (here.slice(-1) !== '/') here += '/';
   var current = function (href) { return href === here ? ' aria-current="page"' : ''; };
@@ -75,10 +75,13 @@
 
   btn.addEventListener('click', function () { set(!open); });
   scrim.addEventListener('click', function () { set(false, true); });
-  // A link to the page you're already on just closes the menu.
+  // A link to the page you're already on just closes the menu; a link to a section of this page
+  // (Projects, from the home page) closes it and lets the page scroll there.
   menu.addEventListener('click', function (e) {
     var a = e.target.closest('a');
-    if (a && a.getAttribute('aria-current') === 'page') { e.preventDefault(); set(false, true); }
+    if (!a) return;
+    if (a.getAttribute('aria-current') === 'page') { e.preventDefault(); set(false, true); }
+    else if (a.hash && a.pathname === location.pathname) set(false);
   });
   document.addEventListener('keydown', function (e) {
     if (!open) return;

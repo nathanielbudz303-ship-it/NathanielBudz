@@ -50,11 +50,16 @@ h1{font-family:'Archivo',system-ui,sans-serif;font-weight:800;font-stretch:118%;
    panel simply slides up over the F-35. */
 .handoff{position:relative;z-index:1;margin-top:calc(-100vh - var(--handoff));pointer-events:none}
 .handoff::after{content:"";display:block;height:var(--handoff)}
-#projects{position:sticky;top:0;pointer-events:auto;border-radius:0;box-shadow:none}
+#projects-panel{position:sticky;top:0;pointer-events:auto;border-radius:0;box-shadow:none}
+/* What /#projects (the menu's Projects link) jumps to: the end of the pin, where the PROJECTS bar
+   has docked and the cards show (2px past it, so scroll rounding can't stop just short). The
+   panel itself starts the pin fully hidden. */
+.handoff-anchor{position:absolute;top:calc(var(--handoff) + 2px);left:0;width:1px;height:1px}
 @media (prefers-reduced-motion:reduce){
   .handoff{margin-top:calc(-1 * var(--handoff))}
   .handoff::after{display:none}
-  #projects{position:relative}
+  #projects-panel{position:relative}
+  .handoff-anchor{top:0}
 }
 /* PROJECTS header: a thin inverted strip at the top of the first project's panel, so it reads as
    a section header rather than a page of its own. */
@@ -115,7 +120,8 @@ h1{font-family:'Archivo',system-ui,sans-serif;font-weight:800;font-stretch:118%;
   </div>
 </section>
 <div class="handoff">
-<section class="panel" id="projects" aria-labelledby="projects-title">
+<span class="handoff-anchor" id="projects"></span>
+<section class="panel" id="projects-panel" aria-labelledby="projects-title">
   <header class="projects-head">
     <h2 class="display" id="projects-title">Projects <span aria-hidden="true">//</span></h2>
   </header>
@@ -157,7 +163,7 @@ h1{font-family:'Archivo',system-ui,sans-serif;font-weight:800;font-stretch:118%;
 </section>
 </div>
 <!-- Bump ?v= whenever a script changes, so a new page never runs against a cached old script. -->
-<script src="assets/js/menu.js?v=1"></script>
+<script src="assets/js/menu.js?v=2"></script>
 <script src="assets/js/jet-ascii.js?v=8"></script>
 <script src="assets/js/jet-dots.js?v=9"></script>
 <script>
